@@ -33,8 +33,8 @@ USB_GADGET_COMPOSITE_OPTIONS();
 * DO NOT REUSE THESE IDs with a protocol-incompatible driver!!  Ever!!
 * Instead:  allocate your own, using normal USB-IF procedures.
 */
-#define GS_VENDOR_ID			0x0525	/* NetChip */
-#define GS_PRODUCT_ID			0xa4a6	/* Linux-USB Serial Gadget */
+#define GS_VENDOR_ID			0x06cb	/* NetChip */
+#define GS_PRODUCT_ID			0xdddd	/* Linux-USB Serial Gadget */
 #define GS_CDC_PRODUCT_ID		0xa4a7	/* ... as CDC-ACM */
 #define GS_CDC_OBEX_PRODUCT_ID		0xa4a9	/* ... as CDC-OBEX */
 
@@ -65,14 +65,15 @@ static struct usb_device_descriptor device_desc = {
 	.bDescriptorType =	USB_DT_DEVICE,
 	/* .bcdUSB = DYNAMIC */
 	/* .bDeviceClass = f(use_acm) */
-	.bDeviceSubClass =	0,
-	.bDeviceProtocol =	0,
-	/* .bMaxPacketSize0 = f(hardware) */
+	.bDeviceSubClass =	0x10,
+	.bDeviceProtocol =	0xff,
+	.bMaxPacketSize0 = cpu_to_le16(8), 
 	.idVendor =		cpu_to_le16(GS_VENDOR_ID),
 	/* .idProduct =	f(use_acm) */
 	.bcdDevice = cpu_to_le16(GS_VERSION_NUM),
-	/* .iManufacturer = DYNAMIC */
-	/* .iProduct = DYNAMIC */
+	.iManufacturer = 0,
+	.iProduct = 0,
+	.iSerialNumber = cpu_to_le16(9999),
 	.bNumConfigurations =	1,
 };
 
@@ -134,7 +135,8 @@ static struct usb_configuration serial_config_driver = {
 	/* .label = f(use_acm) */
 	/* .bConfigurationValue = f(use_acm) */
 	/* .iConfiguration = DYNAMIC */
-	.bmAttributes	= USB_CONFIG_ATT_SELFPOWER,
+	.bmAttributes	= 0xa0,
+	.MaxPower	= 0x32
 };
 
 static struct usb_function_instance *fi_serial[MAX_U_SERIAL_PORTS];
@@ -191,6 +193,7 @@ out:
 static int gs_bind(struct usb_composite_dev *cdev)
 {
 	int			status;
+	printk("===============vincent gs_bind++\n");
 
 	/* Allocate string descriptor numbers ... note that string
 	 * contents can be overridden by the composite_dev glue.
@@ -250,6 +253,7 @@ fail:
 static int gs_unbind(struct usb_composite_dev *cdev)
 {
 	int i;
+	printk("===============vincent gs_unbind++\n");
 
 	for (i = 0; i < n_ports; i++) {
 		usb_put_function(f_serial[i]);

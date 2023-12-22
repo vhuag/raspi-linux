@@ -43,7 +43,7 @@ static struct usb_interface_descriptor gser_interface_desc = {
 	.bLength =		USB_DT_INTERFACE_SIZE,
 	.bDescriptorType =	USB_DT_INTERFACE,
 	/* .bInterfaceNumber = DYNAMIC */
-	.bNumEndpoints =	2,
+	.bNumEndpoints =	3,
 	.bInterfaceClass =	USB_CLASS_VENDOR_SPEC,
 	.bInterfaceSubClass =	0,
 	.bInterfaceProtocol =	0,
@@ -59,6 +59,19 @@ static struct usb_endpoint_descriptor gser_fs_in_desc = {
 	.bmAttributes =		USB_ENDPOINT_XFER_BULK,
 };
 
+static struct usb_endpoint_descriptor gser_fs_in2_desc = {
+	.bLength =		USB_DT_ENDPOINT_SIZE,
+	.bDescriptorType =	USB_DT_ENDPOINT,
+	.bEndpointAddress =	0x83,
+	.bmAttributes =		USB_ENDPOINT_XFER_INT,
+	.wMaxPacketSize =	cpu_to_le16(8),
+	.bInterval		= 4, /* FIXME: Add this field in the
+				      * HID gadget configuration?
+				      * (struct hidg_func_descriptor)
+				      */
+};
+
+
 static struct usb_endpoint_descriptor gser_fs_out_desc = {
 	.bLength =		USB_DT_ENDPOINT_SIZE,
 	.bDescriptorType =	USB_DT_ENDPOINT,
@@ -69,6 +82,7 @@ static struct usb_endpoint_descriptor gser_fs_out_desc = {
 static struct usb_descriptor_header *gser_fs_function[] = {
 	(struct usb_descriptor_header *) &gser_interface_desc,
 	(struct usb_descriptor_header *) &gser_fs_in_desc,
+	(struct usb_descriptor_header *) &gser_fs_in2_desc,
 	(struct usb_descriptor_header *) &gser_fs_out_desc,
 	NULL,
 };
@@ -82,6 +96,19 @@ static struct usb_endpoint_descriptor gser_hs_in_desc = {
 	.wMaxPacketSize =	cpu_to_le16(512),
 };
 
+static struct usb_endpoint_descriptor gser_hs_in2_desc = {
+	.bLength		= USB_DT_ENDPOINT_SIZE,
+	.bDescriptorType	= USB_DT_ENDPOINT,
+	.bEndpointAddress	= 0x83,
+	.bmAttributes		= USB_ENDPOINT_XFER_INT,
+	.wMaxPacketSize =	cpu_to_le16(8),
+	.bInterval		= 4, /* FIXME: Add this field in the
+				      * HID gadget configuration?
+				      * (struct hidg_func_descriptor)
+				      */
+};
+
+
 static struct usb_endpoint_descriptor gser_hs_out_desc = {
 	.bLength =		USB_DT_ENDPOINT_SIZE,
 	.bDescriptorType =	USB_DT_ENDPOINT,
@@ -92,6 +119,7 @@ static struct usb_endpoint_descriptor gser_hs_out_desc = {
 static struct usb_descriptor_header *gser_hs_function[] = {
 	(struct usb_descriptor_header *) &gser_interface_desc,
 	(struct usb_descriptor_header *) &gser_hs_in_desc,
+	(struct usb_descriptor_header *) &gser_hs_in2_desc,
 	(struct usb_descriptor_header *) &gser_hs_out_desc,
 	NULL,
 };
@@ -101,6 +129,13 @@ static struct usb_endpoint_descriptor gser_ss_in_desc = {
 	.bDescriptorType =	USB_DT_ENDPOINT,
 	.bmAttributes =		USB_ENDPOINT_XFER_BULK,
 	.wMaxPacketSize =	cpu_to_le16(1024),
+};
+
+static struct usb_endpoint_descriptor gser_ss_in2_desc = {
+	.bLength =		USB_DT_ENDPOINT_SIZE,
+	.bDescriptorType =	USB_DT_ENDPOINT,
+	.bmAttributes =		USB_ENDPOINT_XFER_INT,
+	.wMaxPacketSize =	cpu_to_le16(8),
 };
 
 static struct usb_endpoint_descriptor gser_ss_out_desc = {
@@ -127,7 +162,7 @@ static struct usb_descriptor_header *gser_ss_function[] = {
 /* string descriptors: */
 
 static struct usb_string gser_string_defs[] = {
-	[0].s = "Generic Serial",
+	[0].s = "Synaptics Serial",
 	{  } /* end of list */
 };
 
